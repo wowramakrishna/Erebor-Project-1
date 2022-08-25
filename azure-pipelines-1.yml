@@ -1,13 +1,19 @@
-name: sampleWeb_$(Date:yyyyMMdd)$(Rev:.r)
+
+# File: azure-pipelines.yaml
+# This is the top-level YAML file that will orchestrate the pipeline
+
 trigger:
 - main
+
 pool:
-  name: Default
-steps:
-- task: VSBuild@1
-  inputs:
-    solution: '*\.sln'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package 
- /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\\"'
-    platform: 'any cpu'
-    configuration: 'release'
+  vmImage: 'ubuntu-latest'
+
+stages:
+- template: pipeline-templates/build.yaml
+- template: pipeline-templates/release.yaml
+  parameters:
+      AdminPassword: $(AdminPassword)
+      AdminTestPassword: $(AdminTestPassword)
+      HostingPlan: $(HostingPlan)
+      ServerName: $(ServerName)
+      WebsiteName: $(WebsiteName) 
